@@ -42,7 +42,7 @@ export default class DatetimeFieldView extends React.Component {
       muiTheme: context.muiTheme ? context.muiTheme : getMuiTheme(),
       views: context.views,
       settings: context.settings,
-      value: props.value ? new Date(props.value) : null
+      value: props.value ? new Date(props.value) : new Date
     };
   }
 
@@ -65,28 +65,30 @@ export default class DatetimeFieldView extends React.Component {
     }
     this.setState(newState);
   }
-  shouldComponentUpdate(props,state) {
-    return !shallowEqual(props, this.props, 'data', 'onChange', 'model') || !(shallowEqual(state,this.state));
+
+  shouldComponentUpdate(props, state) {
+    return !shallowEqual(props, this.props, 'data', 'onChange', 'model') || !shallowEqual(state, this.state);
   }
+
   formatDate(date) {
     return moment(date).format(this.props.field.format);
   }
 
   handleDateChange(event, value) {
-    let date = this.state.value ? this.state.value : value;
+    let date = new Date(this.state.value);
     date.setFullYear(value.getFullYear());
     date.setMonth(value.getMonth());
     date.setDate(value.getDate());
-    this.setState({value: date});
+    this.setState({ value: date });
     this.props.onChange && this.props.onChange(date);
   }
 
   handleTimeChange(event, value) {
-    let date = this.state.value ? this.state.value : value;
+    let date = new Date(this.state.value);
     date.setHours(value.getHours());
     date.setMinutes(value.getMinutes());
     date.setSeconds(value.getSeconds());
-    this.setState({value: date});
+    this.setState({ value: date });
     this.props.onChange && this.props.onChange(date);
   }
 
