@@ -7,7 +7,10 @@
 import React from 'react';
 import getMuiTheme from 'material-ui/lib/styles/getMuiTheme';
 import ContextPure from 'material-ui/lib/mixins/context-pure';
-
+import DatePicker from 'material-ui/lib/date-picker/date-picker';
+import TimePicker from 'material-ui/lib/time-picker/time-picker';
+import { shallowEqual } from 'alaska-admin-view';
+const moment = require('moment');
 export default class DatetimeFieldView extends React.Component {
 
   static propTypes = {
@@ -32,10 +35,14 @@ export default class DatetimeFieldView extends React.Component {
 
   constructor(props, context) {
     super(props);
+    this.handleDateChange = this.handleDateChange.bind(this);
+    this.handleTimeChange = this.handleTimeChange.bind(this);
+    this.formatDate = this.formatDate.bind(this);
     this.state = {
       muiTheme: context.muiTheme ? context.muiTheme : getMuiTheme(),
       views: context.views,
       settings: context.settings,
+      value: props.value ? new Date(props.value) : null
     };
   }
 
@@ -47,11 +54,6 @@ export default class DatetimeFieldView extends React.Component {
     };
   }
 
-  componentWillMount() {
-  }
-
-  componentDidMount() {
-  }
 
   componentWillReceiveProps(nextProps, nextContext) {
     let newState = {};
@@ -63,18 +65,52 @@ export default class DatetimeFieldView extends React.Component {
     }
     this.setState(newState);
   }
+  shouldComponentUpdate(props,state) {
+    return !shallowEqual(props, this.props, 'data', 'onChange', 'model') || !(shallowEqual(state,this.state));
+  }
+  formatDate(date) {
+    return moment(date).format(this.props.field.format);
+  }
 
-  componentWillUnmount() {
+  handleDateChange(event, value) {
+    let date = this.state.value ? this.state.value : value;
+    date.setFullYear(value.getFullYear());
+    date.setMonth(value.getMonth());
+    date.setDate(value.getDate());
+    this.setState({value: date});
+    this.props.onChange && this.props.onChange(date);
+  }
+
+  handleTimeChange(event, value) {
+    let date = this.state.value ? this.state.value : value;
+    date.setHours(value.getHours());
+    date.setMinutes(value.getMinutes());
+    date.setSeconds(value.getSeconds());
+    this.setState({value: date});
+    this.props.onChange && this.props.onChange(date);
   }
 
   render() {
     let props = this.props;
     let state = this.state;
-    let styles = {
-      root: {}
-    };
     return (
-      <div style={styles.root}>DatetimeFieldView Component</div>
+      <div>
+        <DatePicker
+          floatingLabelText={props.field.label}
+          value={state.value}
+          onChange={this.handleDateChange}
+          autoOk={true}
+          formatDate={this.formatDate}
+          style={{marginRight:"10px",display:'inline-block'}}
+        />
+        <TimePicker
+          autoOk={true}
+          format={this.props.field.timeFormat}
+          defaultTime={state.value}
+          onChange={this.handleTimeChange}
+          style={{display:'inline-block'}}
+        />
+      </div>
     );
   }
 }
