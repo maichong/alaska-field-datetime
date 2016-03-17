@@ -28,6 +28,7 @@ exports.plain = Date;
  */
 exports.viewOptions = function (field, Model) {
   let options = alaska.Field.viewOptions.apply(this, arguments);
+  options.cellFormat = field.cellFormat || 'YYYY-MM-DD HH:mm:ss';
   options.format = field.format || 'YYYY-MM-DD';
   options.timeFormat = field.timeFormat || '24hr';
   return options;
