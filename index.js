@@ -7,6 +7,7 @@
 'use strict';
 
 const alaska = require('alaska');
+const moment = require('moment');
 
 exports.views = {
   cell: {
@@ -20,6 +21,40 @@ exports.views = {
 };
 
 exports.plain = Date;
+
+/**
+ * 初始化Schema
+ * @param {field} field   alaksa.Model中的字段配置
+ * @param {mongoose.Schema} schema
+ * @param {alaska.Model} Model
+ */
+exports.initSchema = function (field, schema, Model) {
+  let options = {
+    type: Date
+  };
+  [
+    'get',
+    'set',
+    'default',
+    'index',
+    'required',
+    'select',
+    'min',
+    'max',
+    'expires'
+  ].forEach(function (key) {
+    if (field[key] !== undefined) {
+      options[key] = field[key];
+    }
+  });
+
+  schema.path(field.path, options);
+
+  Model.underscoreMethod(field.path, 'format', function (format) {
+    return moment(this.get(field.path)).format(format || field.format || 'YYYY-MM-DD');
+  });
+};
+
 
 /**
  * alaska-admin-view 前端控件初始化参数
