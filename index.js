@@ -9,7 +9,87 @@
 const alaska = require('alaska');
 const moment = require('moment');
 
-exports.views = {
+class DatetimeField extends alaska.Field {
+  init() {
+    let field = this;
+    field.cellFormat = field.cellFormat || 'YYYY-MM-DD HH:mm:ss';
+    field.format = field.format || 'YYYY-MM-DD';
+    field.timeFormat = field.timeFormat || '24hr';
+    this.underscoreMethod('format', function (format) {
+      return moment(this.get(field.path)).format(format || field.format || 'YYYY-MM-DD');
+    });
+  }
+
+  createFilter(filter) {
+    if (!filter) {
+      return;
+    }
+    let value;
+
+    //精确
+    if (typeof filter === 'string' || filter instanceof Date) {
+      value = filter;
+    } else if (typeof filter === 'object' && filter.value) {
+      value = filter.value;
+    }
+    if (value) {
+      value = moment(value);
+      if (!value.isValid()) {
+        return undefined;
+      }
+      let end = moment(value).endOf('day').toDate();
+      let start = moment(value).startOf('day').toDate();
+      return { $lte: end, $gte: start };
+    }
+
+    //区间
+    let bt;
+    if (filter instanceof Array) {
+      bt = filter;
+    } else if (filter.$bt && filter.$bt instanceof Array) {
+      bt = filter.$bt;
+    }
+    if (bt && bt.length === 2) {
+      let start = moment(bt[0]);
+      let end = moment(bt[1]);
+      if (start.isValid() && end.isValid()) {
+        return {
+          $gte: start.startOf('day').toDate(),
+          $lte: end.endOf('day').toDate()
+        };
+      }
+    }
+
+    //比较
+    ['$gt', '$gte', '$lt', '$lte'].forEach((key) => {
+      let val = filter[key];
+      if (val) {
+        if (!(val instanceof Date)) {
+          val = moment(val);
+          if (!val.isValid()) {
+            return;
+          }
+          if (key[1] === 'g') {
+            //$gt $gte
+            val = val.startOf('day').toDate();
+          } else {
+            //$lt $lte
+            val = val.endOf('day').toDate();
+          }
+        }
+        if (!value) {
+          value = {};
+        }
+        value[key] = val;
+      }
+    });
+    if (value) {
+      return value;
+    }
+  }
+}
+
+DatetimeField.views = {
   cell: {
     name: 'DatetimeFieldCell',
     field: __dirname + '/lib/cell.js'
@@ -20,51 +100,10 @@ exports.views = {
   }
 };
 
-exports.plain = Date;
+DatetimeField.plain = Date;
 
-/**
- * 初始化Schema
- * @param {field} field   alaksa.Model中的字段配置
- * @param {mongoose.Schema} schema
- * @param {alaska.Model} Model
- */
-exports.initSchema = function (field, schema, Model) {
-  let options = {
-    type: Date
-  };
-  [
-    'get',
-    'set',
-    'default',
-    'index',
-    'required',
-    'select',
-    'min',
-    'max',
-    'expires'
-  ].forEach(function (key) {
-    if (field[key] !== undefined) {
-      options[key] = field[key];
-    }
-  });
+DatetimeField.options = ['min', 'max', 'expires'];
 
-  schema.path(field.path, options);
+DatetimeField.viewOptions = ['min', 'max', 'cellFormat', 'format', 'timeFormat']
 
-  Model.underscoreMethod(field.path, 'format', function (format) {
-    return moment(this.get(field.path)).format(format || field.format || 'YYYY-MM-DD');
-  });
-};
-
-
-/**
- * alaska-admin-view 前端控件初始化参数
- * @param field
- * @param Model
- */
-exports.viewOptions = function (field, Model) {
-  let options = alaska.Field.viewOptions.apply(this, arguments);
-  options.cellFormat = field.cellFormat || 'YYYY-MM-DD HH:mm:ss';
-  options.format = field.format || 'YYYY-MM-DD';
-  options.timeFormat = field.timeFormat || '24hr';
-  return options;
-};
+module.exports = DatetimeField;
