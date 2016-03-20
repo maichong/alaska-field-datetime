@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import getMuiTheme from 'material-ui/lib/styles/getMuiTheme';
 import ContextPure from 'material-ui/lib/mixins/context-pure';
 import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import TimePicker from 'material-ui/lib/time-picker/time-picker';
@@ -17,53 +16,18 @@ export default class DatetimeFieldView extends React.Component {
     children: React.PropTypes.node
   };
 
-  static contextTypes = {
-    muiTheme: React.PropTypes.object,
-    views: React.PropTypes.object,
-    settings: React.PropTypes.object,
-  };
-
-  static childContextTypes = {
-    muiTheme: React.PropTypes.object,
-    views: React.PropTypes.object,
-    settings: React.PropTypes.object,
-  };
-
   static mixins = [
     ContextPure
   ];
 
-  constructor(props, context) {
+  constructor(props) {
     super(props);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleTimeChange = this.handleTimeChange.bind(this);
     this.formatDate = this.formatDate.bind(this);
     this.state = {
-      muiTheme: context.muiTheme ? context.muiTheme : getMuiTheme(),
-      views: context.views,
-      settings: context.settings,
       value: props.value ? new Date(props.value) : new Date
     };
-  }
-
-  getChildContext() {
-    return {
-      muiTheme: this.state.muiTheme,
-      views: this.context.views,
-      settings: this.context.settings,
-    };
-  }
-
-
-  componentWillReceiveProps(nextProps, nextContext) {
-    let newState = {};
-    if (nextContext.muiTheme) {
-      newState.muiTheme = nextContext.muiTheme;
-    }
-    if (nextContext.views) {
-      newState.views = nextContext.views;
-    }
-    this.setState(newState);
   }
 
   shouldComponentUpdate(props, state) {
@@ -91,6 +55,7 @@ export default class DatetimeFieldView extends React.Component {
     this.setState({ value: date });
     this.props.onChange && this.props.onChange(date);
   }
+
   render() {
     let props = this.props;
     let state = this.state;
@@ -102,7 +67,8 @@ export default class DatetimeFieldView extends React.Component {
           floatingLabelText={props.field.label}
           onChange={this.handleDateChange}
           formatDate={this.formatDate}
-          style={{marginRight:"10px",display:'inline-block'}}
+          value={state.value}
+          style={{marginRight:10,display:'inline-block'}}
         />
         <TimePicker
           disabled={props.disabled}
