@@ -91,21 +91,21 @@ export default class DatetimeFieldView extends React.Component {
     this.setState({ value: date });
     this.props.onChange && this.props.onChange(date);
   }
-
   render() {
     let props = this.props;
     let state = this.state;
     return (
       <div>
         <DatePicker
-          floatingLabelText={props.field.label}
-          value={state.value}
-          onChange={this.handleDateChange}
           autoOk={true}
+          disabled={props.disabled}
+          floatingLabelText={props.field.label}
+          onChange={this.handleDateChange}
           formatDate={this.formatDate}
           style={{marginRight:"10px",display:'inline-block'}}
         />
         <TimePicker
+          disabled={props.disabled}
           autoOk={true}
           format={this.props.field.timeFormat}
           defaultTime={state.value}
