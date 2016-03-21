@@ -12,11 +12,11 @@ const moment = require('moment');
 class DatetimeField extends alaska.Field {
   init() {
     let field = this;
-    field.cellFormat = field.cellFormat || 'YYYY-MM-DD HH:mm:ss';
-    field.format = field.format || 'YYYY-MM-DD';
-    field.timeFormat = field.timeFormat || '24hr';
+    field.format = field.format || 'YYYY-MM-DD HH:mm:ss';
+    field.dateFormat = field.dateFormat || 'YYYY-MM-DD';
+    field.timeFormat = field.timeFormat || 'HH:mm:ss';
     this.underscoreMethod('format', function (format) {
-      return moment(this.get(field.path)).format(format || field.format || 'YYYY-MM-DD');
+      return moment(this.get(field.path)).format(format || field.format);
     });
   }
 
@@ -104,6 +104,6 @@ DatetimeField.plain = Date;
 
 DatetimeField.options = ['min', 'max', 'expires'];
 
-DatetimeField.viewOptions = ['min', 'max', 'cellFormat', 'format', 'timeFormat']
+DatetimeField.viewOptions = ['min', 'max', 'format', 'dateFormat', 'timeFormat']
 
 module.exports = DatetimeField;

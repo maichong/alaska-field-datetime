@@ -21,7 +21,7 @@ export default class DatetimeFieldCell extends React.Component {
     let props = this.props;
     return (
       <div>
-        {moment(props.value).format(props.field.cellFormat || props.field.format)}
+        {moment(props.value).format(props.field.format)}
       </div>
     );
   }

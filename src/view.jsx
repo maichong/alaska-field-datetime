@@ -5,26 +5,20 @@
  */
 
 import React from 'react';
-import ContextPure from 'material-ui/lib/mixins/context-pure';
-import DatePicker from 'material-ui/lib/date-picker/date-picker';
-import TimePicker from 'material-ui/lib/time-picker/time-picker';
 import { shallowEqual } from 'alaska-admin-view';
-const moment = require('moment');
+import DateTime from 'react-datetime';
+import 'react-datetime/css/react-datetime.css';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+
 export default class DatetimeFieldView extends React.Component {
 
   static propTypes = {
     children: React.PropTypes.node
   };
 
-  static mixins = [
-    ContextPure
-  ];
-
   constructor(props) {
     super(props);
-    this.handleDateChange = this.handleDateChange.bind(this);
-    this.handleTimeChange = this.handleTimeChange.bind(this);
-    this.formatDate = this.formatDate.bind(this);
     this.state = {
       value: props.value ? new Date(props.value) : new Date
     };
@@ -34,50 +28,24 @@ export default class DatetimeFieldView extends React.Component {
     return !shallowEqual(props, this.props, 'data', 'onChange', 'model') || !shallowEqual(state, this.state);
   }
 
-  formatDate(date) {
-    return moment(date).format(this.props.field.format);
-  }
-
-  handleDateChange(event, value) {
-    let date = new Date(this.state.value);
-    date.setFullYear(value.getFullYear());
-    date.setMonth(value.getMonth());
-    date.setDate(value.getDate());
-    this.setState({ value: date });
-    this.props.onChange && this.props.onChange(date);
-  }
-
-  handleTimeChange(event, value) {
-    let date = new Date(this.state.value);
-    date.setHours(value.getHours());
-    date.setMinutes(value.getMinutes());
-    date.setSeconds(value.getSeconds());
-    this.setState({ value: date });
-    this.props.onChange && this.props.onChange(date);
-  }
-
   render() {
     let props = this.props;
-    let state = this.state;
+    let value = props.value;
+    let field = props.field;
+    if (field.format && value) {
+      value = moment(value).format(field.format);
+    }
     return (
-      <div>
-        <DatePicker
-          autoOk={true}
-          disabled={props.disabled}
-          floatingLabelText={props.field.label}
-          onChange={this.handleDateChange}
-          formatDate={this.formatDate}
-          value={state.value}
-          style={{marginRight:10,display:'inline-block'}}
-        />
-        <TimePicker
-          disabled={props.disabled}
-          autoOk={true}
-          format={this.props.field.timeFormat}
-          defaultTime={state.value}
-          onChange={this.handleTimeChange}
-          style={{display:'inline-block'}}
-        />
+      <div className="form-group">
+        <label className="col-sm-2 control-label">{field.label}</label>
+        <div className="col-sm-10">
+          <DateTime
+            value={value}
+            dateFormat={field.dateFormat}
+            timeFormat={field.timeFormat}
+            onChange={props.onChange}
+          />
+        </div>
       </div>
     );
   }
