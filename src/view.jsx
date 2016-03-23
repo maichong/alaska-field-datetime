@@ -35,8 +35,16 @@ export default class DatetimeFieldView extends React.Component {
     if (field.format && value) {
       value = moment(value).format(field.format);
     }
+    let errorText = props.errorText;
+    let help = field.help;
+    let className = 'form-group';
+    if (errorText) {
+      className += ' has-error';
+      help = errorText;
+    }
+    let helpElement = help ? <p className="help-block">{help}</p> : null;
     return (
-      <div className="form-group">
+      <div className={className}>
         <label className="col-sm-2 control-label">{field.label}</label>
         <div className="col-sm-10">
           <DateTime
@@ -45,6 +53,7 @@ export default class DatetimeFieldView extends React.Component {
             timeFormat={field.timeFormat}
             onChange={props.onChange}
           />
+          {helpElement}
         </div>
       </div>
     );
