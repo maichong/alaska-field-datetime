@@ -32,6 +32,7 @@ export default class DatetimeFieldView extends React.Component {
     let props = this.props;
     let value = props.value;
     let field = props.field;
+    let disabled = props.disabled;
     if (field.format && value) {
       value = moment(value).format(field.format);
     }
@@ -47,12 +48,14 @@ export default class DatetimeFieldView extends React.Component {
       <div className={className}>
         <label className="col-sm-2 control-label">{field.label}</label>
         <div className="col-sm-10">
-          <DateTime
-            value={value}
-            dateFormat={field.dateFormat}
-            timeFormat={field.timeFormat}
-            onChange={props.onChange}
-          />
+          {
+            disabled ? <input type="text" className="form-control" disabled value={value}/> : <DateTime
+              value={value}
+              dateFormat={field.dateFormat}
+              timeFormat={field.timeFormat}
+              onChange={props.onChange}
+            />
+          }
           {helpElement}
         </div>
       </div>
