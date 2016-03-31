@@ -9,12 +9,14 @@ import { shallowEqual } from 'alaska-admin-view';
 import DateTime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
+import 'moment/locale/zh-tw';
 import 'moment/locale/zh-cn';
 
 export default class DatetimeFieldView extends React.Component {
 
-  static propTypes = {
-    children: React.PropTypes.node
+  static propTypes = {};
+  static contextTypes = {
+    settings: React.PropTypes.object
   };
 
   constructor(props) {
@@ -22,6 +24,10 @@ export default class DatetimeFieldView extends React.Component {
     this.state = {
       value: props.value ? new Date(props.value) : new Date
     };
+  }
+
+  componentWillMount() {
+    moment.locale(this.context.settings.locale);
   }
 
   shouldComponentUpdate(props, state) {
