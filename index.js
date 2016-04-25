@@ -21,9 +21,7 @@ class DatetimeField extends alaska.Field {
   }
 
   createFilter(filter) {
-    if (!filter) {
-      return;
-    }
+    if (!filter) return;
     let value;
 
     //精确
@@ -48,6 +46,8 @@ class DatetimeField extends alaska.Field {
       bt = filter;
     } else if (filter.$bt && filter.$bt instanceof Array) {
       bt = filter.$bt;
+    } else if (filter.bt && filter.bt instanceof Array) {
+      bt = filter.bt;
     }
     if (bt && bt.length === 2) {
       let start = moment(bt[0]);
@@ -61,14 +61,12 @@ class DatetimeField extends alaska.Field {
     }
 
     //比较
-    ['$gt', '$gte', '$lt', '$lte'].forEach((key) => {
-      let val = filter[key];
+    ['gt', 'gte', 'lt', 'lte'].forEach((key) => {
+      let val = filter[key] || filter['$' + key];
       if (val) {
         if (!(val instanceof Date)) {
           val = moment(val);
-          if (!val.isValid()) {
-            return;
-          }
+          if (!val.isValid()) return;
           if (key[1] === 'g') {
             //$gt $gte
             val = val.startOf('day').toDate();
@@ -80,7 +78,7 @@ class DatetimeField extends alaska.Field {
         if (!value) {
           value = {};
         }
-        value[key] = val;
+        value['$' + key] = val;
       }
     });
     if (value) {
@@ -97,6 +95,10 @@ DatetimeField.views = {
   view: {
     name: 'DatetimeFieldView',
     field: __dirname + '/lib/view.js'
+  },
+  filter: {
+    name: 'DatetimeFieldFilter',
+    field: __dirname + '/lib/filter.js'
   }
 };
 
