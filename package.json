@@ -1,7 +1,11 @@
 {
   "name": "alaska-field-datetime",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Alaska datetime field",
+  "keywords": [
+    "alaska",
+    "alaska-field"
+  ],
   "main": "index.js",
   "scripts": {
     "build": "babel ./src --out-dir ./lib",
@@ -27,7 +31,7 @@
     "alaska": "*"
   },
   "dependencies": {
-    "moment": "^2.12.0",
+    "moment": "^2.13.0",
     "react-datetime": "^2.1.0"
   }
 }
