@@ -90,15 +90,15 @@ class DatetimeField extends alaska.Field {
 DatetimeField.views = {
   cell: {
     name: 'DatetimeFieldCell',
-    field: __dirname + '/lib/cell.js'
+    path: __dirname + '/lib/cell.js'
   },
   view: {
     name: 'DatetimeFieldView',
-    field: __dirname + '/lib/view.js'
+    path: __dirname + '/lib/view.js'
   },
   filter: {
     name: 'DatetimeFieldFilter',
-    field: __dirname + '/lib/filter.js'
+    path: __dirname + '/lib/filter.js'
   }
 };
 
