@@ -9,10 +9,6 @@ const moment = require('moment');
 
 export default class DatetimeFieldCell extends React.Component {
 
-  static propTypes = {
-    children: React.PropTypes.node
-  };
-
   shouldComponentUpdate(props) {
     return props.value != this.props.value;
   }

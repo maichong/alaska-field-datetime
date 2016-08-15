@@ -11,20 +11,22 @@ import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 
+const { bool, object, any, func, string } = React.PropTypes;
+
 export default class DatetimeFieldView extends React.Component {
 
   static propTypes = {
-    model: React.PropTypes.object,
-    field: React.PropTypes.object,
-    data: React.PropTypes.object,
-    errorText: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    value: React.PropTypes.any,
-    onChange: React.PropTypes.func,
+    model: object,
+    field: object,
+    data: object,
+    errorText: string,
+    disabled: bool,
+    value: any,
+    onChange: func,
   };
 
   static contextTypes = {
-    settings: React.PropTypes.object
+    settings: object
   };
 
   constructor(props) {
@@ -52,7 +54,7 @@ export default class DatetimeFieldView extends React.Component {
     }
     let errorText = props.errorText;
     let help = field.help;
-    let className = 'form-group';
+    let className = 'form-group datetime-field';
     if (errorText) {
       className += ' has-error';
       help = errorText;

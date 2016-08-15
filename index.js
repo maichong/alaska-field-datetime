@@ -106,6 +106,6 @@ DatetimeField.plain = Date;
 
 DatetimeField.options = ['min', 'max', 'expires'];
 
-DatetimeField.viewOptions = ['min', 'max', 'format', 'dateFormat', 'timeFormat']
+DatetimeField.viewOptions = ['min', 'max', 'format', 'dateFormat', 'timeFormat'];
 
 module.exports = DatetimeField;
